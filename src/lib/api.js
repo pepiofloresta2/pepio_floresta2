@@ -105,12 +105,12 @@ export const remove = (entity, id) =>
 export const saveSettings = settings =>
   req({ entity: "Settings", action: "saveSettings", data: settings });
 
-export const togglePayment = (residentId, month, paid, method = "", date = "", amount = "") =>
+export const togglePayment = (residentId, month, paid, method = "", date = "", amount = "", documentNumber = "") =>
   req({
     entity: "Residents",
     action: "togglePayment",
     id: residentId,
-    data: { month, paid, method, date, amount },
+    data: { month, paid, method, date, amount, documentNumber },
   });
 
 export async function restoreBackup(data) {

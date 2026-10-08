@@ -12,7 +12,7 @@ const N = {
 };
 
 const H = {
-  Transactions: ["id","type","category","description","amount","date","method","created_date"],
+  Transactions: ["id","type","category","description","amount","date","method","created_date","documentNumber"],
   Bookings: ["id","residentId","residentName","contact","purpose","date","timeSlot","status","created_date","totalAmount"],
   Residents: ["id","name","house","phone","email","notes","exempt","paidMonths","created_date","monthlyPaymentIds","cadastro","cpf","codigoParoquia"],
   Settings: ["key","value"],
@@ -244,6 +244,7 @@ function ensureSheet(entity) {
 
 function sh(entity) {
   if(entity === "Bookings") return ensureBookingSheet();
+  if(entity === "Transactions") return ensureSheet(entity);
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(N[entity]);
   if (!sheet) throw Error("Aba não encontrada: " + entity);
   return sheet;
@@ -457,7 +458,7 @@ function togglePayment(residentId, data) {
         id:Utilities.getUuid(),
         type:"income", category:"dizimo",
         description:String(resident.name || "Dizimista"),
-        amount, date:paymentDate, method,
+        amount, date:paymentDate, method, documentNumber:String(data.documentNumber||"").trim(),
         created_date:new Date().toISOString()
       });
       transaction = created;

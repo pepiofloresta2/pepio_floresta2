@@ -109,6 +109,7 @@
   .report-print-title{display:block;margin-bottom:16px}
   .report-print-title h2{margin:0 0 4px}
   .report-table{font-size:11px}
+  .report-summary,.report-monthly{display:none!important}
   .report-grid{grid-template-columns:1fr 1fr}
   table{width:100%;border-collapse:collapse}
   th,td{border-bottom:1px solid #ddd;padding:6px 5px;text-align:left}
