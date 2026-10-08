@@ -14,7 +14,7 @@ const N = {
 const H = {
   Transactions: ["id","type","category","description","amount","date","method","created_date"],
   Bookings: ["id","residentId","residentName","contact","purpose","date","timeSlot","status","created_date","totalAmount"],
-  Residents: ["id","name","house","phone","email","notes","exempt","paidMonths","created_date","monthlyPaymentIds","cadastro","cpf"],
+  Residents: ["id","name","house","phone","email","notes","exempt","paidMonths","created_date","monthlyPaymentIds","cadastro","cpf","codigoParoquia"],
   Settings: ["key","value"],
   Payments: ["id","bookingId","residentId","date","amount","method","description","transactionId","created_date"],
   Audit: ["id","date","actor","action","entity","entityId","description","amount"],
