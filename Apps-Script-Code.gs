@@ -143,7 +143,7 @@ function doPost(e) {
     if(action==="logout") { CacheService.getScriptCache().remove("session_"+p.token); return out({ok:true,data:true}); }
     if(action==="me") return out({ok:true,data:{user:session,permissions:ROLE_PERMISSIONS[session.role]||[]}});
     if(action==="users") { if(session.role!=="Administrador" || !can(session,"usuarios")) throw Error("Somente o Administrador pode gerenciar usuários."); result=usersAction(p); logAudit(p,result,session); return out({ok:true,data:result}); }
-    if(action==="changePassword") { result=changePassword(session,p); logAudit({action:"changePassword",entity:"Users",id:session.userId,data:{description:"Alteração da própria senha"}},result,session); return out({ok:true,data:result}); }
+    if(action==="changepassword") { result=changePassword(session,p); logAudit({action:"changePassword",entity:"Users",id:session.userId,data:{description:"Alteração da própria senha"}},result,session); return out({ok:true,data:result}); }
     const permission=permissionForEntity(p.entity,action);
     if(!can(session,permission)) throw Error("Você não tem permissão para acessar este módulo.");
     const mutating=["create","update","delete","togglepayment","restorebackup","savesettings"].includes(action);

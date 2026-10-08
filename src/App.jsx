@@ -176,11 +176,16 @@ function Reports({data,canAudit=false}){
     const out=rows.filter(x=>x.type==="expense").reduce((a,x)=>a+Number(x.amount||0),0);
     return{m,inc,out,net:inc-out};
   });
-  const incomeByCat={},expenseByCat={};
+  const incomeByCat={},expenseByCat={},incomeByCatMethod={};
+  const methodLabels={pix:"PIX",cash:"Dinheiro",credit:"Cartão de crédito",debit:"Cartão de débito",transfer:"Transferência",other:"Outro"};
   tx.forEach(x=>{
     const key=categories[x.category]||x.category||"Outras", amount=Number(x.amount||0);
-    if(x.type==="income")incomeByCat[key]=(incomeByCat[key]||0)+amount;
-    else expenseByCat[key]=(expenseByCat[key]||0)+amount;
+    if(x.type==="income"){
+      incomeByCat[key]=(incomeByCat[key]||0)+amount;
+      const method=methodLabels[String(x.method||"").toLowerCase()]||x.method||"Não informado";
+      const groupKey=`${key} — ${method}`;
+      incomeByCatMethod[groupKey]=(incomeByCatMethod[groupKey]||0)+amount;
+    } else expenseByCat[key]=(expenseByCat[key]||0)+amount;
   });
   const exportCSV=()=>{
     const rows=[
@@ -191,6 +196,8 @@ function Reports({data,canAudit=false}){
       ["MOVIMENTAÇÃO MENSAL"],["Mês","Entradas","Saídas","Resultado"]
     ];
     monthRows.forEach(r=>rows.push([monthLabel(r.m),r.inc,r.out,r.net]));
+    rows.push([], ["ENTRADAS POR CATEGORIA E FORMA DE RECEBIMENTO"],["Categoria / forma","Valor (R$)"]);
+    Object.entries(incomeByCatMethod).sort((a,b)=>a[0].localeCompare(b[0],"pt-BR")).forEach(([k,v])=>rows.push([k,v]));
     rows.push([], ["RECEITAS POR CATEGORIA"],["Categoria","Valor"]);
     Object.entries(incomeByCat).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>rows.push([k,v]));
     rows.push([], ["DESPESAS POR CATEGORIA"],["Categoria","Valor"]);
@@ -212,7 +219,7 @@ function Reports({data,canAudit=false}){
       <div className="card report-filters no-print"><div className="date-range"><F l="Ano"><select className="input" value={year} onChange={e=>setPeriod(e.target.value)}>{years.map(y=><option key={y} value={y}>{y}</option>)}</select></F><F l="De"><input className="input" type="date" value={from} onChange={e=>{setFrom(e.target.value);setYear(e.target.value.slice(0,4))}}/></F><F l="Até"><input className="input" type="date" value={to} onChange={e=>setTo(e.target.value)}/></F></div></div>
       <div className="report-summary"><Stat t="Saldo inicial" v={brl(initial)}/><Stat t="Entradas" v={brl(income)}/><Stat t="Saídas" v={brl(expense)}/><Stat t="Resultado do período" v={brl(result)}/><Stat t="Saldo final" v={brl(final)}/><Stat t="A receber" v={brl(receivable)}/></div>
       <div className="card report-section"><h3>Movimentação mensal</h3><div style={{overflow:"auto"}}><table><thead><tr><th>Mês</th><th>Entradas</th><th>Saídas</th><th>Resultado</th></tr></thead><tbody>{monthRows.map(r=><tr key={r.m}><td>{monthLabel(r.m)}</td><td className="positive">{brl(r.inc)}</td><td className="negative">{brl(r.out)}</td><td className={r.net>=0?"positive":"negative"}><b>{r.net>=0?"+":"−"} {brl(Math.abs(r.net))}</b></td></tr>)}</tbody></table></div></div>
-      <div className="report-grid"><div className="card report-section"><h3>Receitas por categoria</h3>{Object.entries(incomeByCat).sort((a,b)=>b[1]-a[1]).map(([k,v])=><div className="report-line" key={k}><span>{k}</span><b className="positive">{brl(v)}</b></div>)}{!Object.keys(incomeByCat).length&&<div className="empty-state">Nenhuma receita no período.</div>}</div><div className="card report-section"><h3>Despesas por categoria</h3>{Object.entries(expenseByCat).sort((a,b)=>b[1]-a[1]).map(([k,v])=><div className="report-line" key={k}><span>{k}</span><b className="negative">{brl(v)}</b></div>)}{!Object.keys(expenseByCat).length&&<div className="empty-state">Nenhuma despesa no período.</div>}</div></div>
+      <div className="report-grid"><div className="card report-section"><h3>Entradas por categoria e forma de recebimento</h3><div style={{overflowX:"auto"}}><table><thead><tr><th>Categoria / forma</th><th>Valor</th></tr></thead><tbody>{Object.entries(incomeByCatMethod).sort((a,b)=>a[0].localeCompare(b[0],"pt-BR")).map(([k,v])=><tr key={k}><td>{k}</td><td className="positive"><b>{brl(v)}</b></td></tr>)}</tbody></table></div>{!Object.keys(incomeByCatMethod).length&&<div className="empty-state">Nenhuma entrada no período.</div>}</div><div className="card report-section"><h3>Despesas por categoria</h3>{Object.entries(expenseByCat).sort((a,b)=>b[1]-a[1]).map(([k,v])=><div className="report-line" key={k}><span>{k}</span><b className="negative">{brl(v)}</b></div>)}{!Object.keys(expenseByCat).length&&<div className="empty-state">Nenhuma despesa no período.</div>}</div></div>
       <div className="card report-table" style={{padding:8,overflow:"auto",marginTop:16}}><h3 style={{padding:"0 10px"}}>Lançamentos do período</h3><table><thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th><th>Forma</th><th>Valor</th></tr></thead><tbody>{tx.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))).map(x=><tr key={x.id}><td>{dateBR(x.date)}</td><td>{x.type==="income"?"Entrada":"Saída"}</td><td>{categories[x.category]||x.category}</td><td>{x.description||"—"}</td><td>{x.method||"—"}</td><td className={x.type==="income"?"positive":"negative"}>{x.type==="income"?"+":"−"} {brl(x.amount)}</td></tr>)}</tbody></table>{!tx.length&&<div className="empty-state">Nenhum lançamento no período.</div>}</div>
     </>}
     {mode==="residents"&&<><div className="card report-filters no-print"><F l="Mês de referência"><input className="input" type="month" value={from.slice(0,7)} onChange={e=>{const x=e.target.value;setFrom(`${x}-01`);const d=new Date(Number(x.slice(0,4)),Number(x.slice(5,7)),0);setTo(`${x}-${String(d.getDate()).padStart(2,"0")}`)}}/></F></div><div className="report-summary"><Stat t="Dizimistas" v={(data.residents||[]).filter(x=>!x.inactive).length}/><Stat t="Pagos" v={(data.residents||[]).filter(x=>!x.inactive&&(x.exempt||(x.paidMonths||[]).includes(from.slice(0,7)))).length}/><Stat t="Pendentes" v={(data.residents||[]).filter(x=>!x.exempt&&!x.inactive&&residentPendingMonths(x).includes(from.slice(0,7))).length}/><Stat t="% recebido" v={`${(data.residents||[]).filter(x=>!x.inactive).length?Math.round((data.residents||[]).filter(x=>!x.inactive&&(x.exempt||(x.paidMonths||[]).includes(from.slice(0,7)))).length/(data.residents||[]).filter(x=>!x.inactive).length*100):0}%`}/></div><div className="card report-table" style={{padding:8,overflow:"auto"}}><table><thead><tr><th>Dizimista</th><th>Endereço</th><th>Meses pendentes</th><th>Valor em aberto</th></tr></thead><tbody>{(data.residents||[]).filter(x=>!x.inactive).map(x=><tr key={x.id}><td><b>{x.name}</b></td><td>{x.house||"—"}</td><td>{residentPendingMonths(x).length}</td><td>{brl(residentPendingMonths(x).length*Number(data.settings?.taxaMensal||0))}</td></tr>)}</tbody></table></div></>}
