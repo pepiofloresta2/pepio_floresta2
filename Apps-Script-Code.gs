@@ -234,17 +234,25 @@ function ensureSheet(entity) {
     sheet.getRange(1,1,1,H[entity].length).setValues([H[entity]]);
     sheet.setFrozenRows(1);
   } else {
-    const headers = sheet.getRange(1,1,1,Math.max(sheet.getLastColumn(), H[entity].length)).getValues()[0].map(String);
-    if (headers.slice(0,H[entity].length).join("|") !== H[entity].join("|")) {
-      sheet.getRange(1,1,1,H[entity].length).setValues([H[entity]]);
-    }
+    // Migração segura: nunca sobrescreve cabeçalhos existentes nem move dados.
+    // Se uma coluna já contém dados mas ficou sem título, aproveita esse cabeçalho vazio.
+    const width = Math.max(sheet.getLastColumn(), H[entity].length);
+    const headers = sheet.getRange(1,1,1,width).getValues()[0].map(v => String(v || "").trim());
+    H[entity].forEach(name => {
+      if (headers.includes(name)) return;
+      let idx = headers.findIndex((h,i) => !h && i < sheet.getLastColumn());
+      if (idx < 0) idx = headers.findIndex(h => !h);
+      if (idx < 0) idx = headers.length;
+      sheet.getRange(1,idx+1).setValue(name);
+      headers[idx] = name;
+    });
   }
   return sheet;
 }
 
 function sh(entity) {
   if(entity === "Bookings") return ensureBookingSheet();
-  if(entity === "Transactions") return ensureSheet(entity);
+  if(entity === "Transactions" || entity === "Residents") return ensureSheet(entity);
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(N[entity]);
   if (!sheet) throw Error("Aba não encontrada: " + entity);
   return sheet;
@@ -280,7 +288,8 @@ function create(entity, data) {
     obj.paidMonths = JSON.stringify(data.paidMonths || []);
     obj.monthlyPaymentIds = JSON.stringify(data.monthlyPaymentIds || {});
   }
-  sheet.appendRow(H[entity].map(h => cell(obj[h])));
+  const headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0].map(String);
+  sheet.appendRow(headers.map(h => cell(obj[h])));
   return norm(obj, entity);
 }
 
@@ -295,7 +304,8 @@ function update(entity, id, data) {
     obj.paidMonths = JSON.stringify(data.paidMonths || []);
     obj.monthlyPaymentIds = JSON.stringify(data.monthlyPaymentIds || {});
   }
-  sheet.getRange(rowNumber,1,1,H[entity].length).setValues([H[entity].map(h => cell(obj[h]))]);
+  const headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0].map(String);
+  sheet.getRange(rowNumber,1,1,headers.length).setValues([headers.map(h => cell(obj[h]))]);
   return norm(obj, entity);
 }
 
