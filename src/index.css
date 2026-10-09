@@ -101,6 +101,7 @@
 .report-line{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #e2e8f0}
 .report-print-title{display:none}
 @media print{
+  .statement-hide-print{display:none!important}
   @page{size:A4 portrait;margin:12mm}
   body{background:#fff!important}
   .desktop-only,.mobile-only,.no-print,button{display:none!important}
