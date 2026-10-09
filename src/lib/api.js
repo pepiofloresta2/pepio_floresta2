@@ -130,3 +130,5 @@ export async function usersCreate(data){ return req({action:"users",subaction:"c
 export async function usersUpdate(id,data){ return req({action:"users",subaction:"update",id,data}); }
 export async function usersDelete(id){ return req({action:"users",subaction:"delete",id}); }
 export async function changePassword(currentPassword,newPassword){ return req({action:"changePassword",currentPassword,newPassword}); }
+
+export const saveStatementReceipt = data => req({ action: "statementreceipt", data });

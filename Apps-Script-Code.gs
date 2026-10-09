@@ -8,7 +8,8 @@ const N = {
   Meetings: "Meetings",
   Users: "Users",
   Assets: "Assets",
-  Documents: "Documents"
+  Documents: "Documents",
+  StatementReceipts: "StatementReceipts"
 };
 
 const H = {
@@ -21,7 +22,8 @@ const H = {
   Meetings: ["id","type","title","date","time","location","agenda","participants","decisions","status","notes","created_date"],
   Users: ["id","name","username","passwordHash","role","active","created_date","updated_date"],
   Assets: ["id","name","category","quantity","location","acquisitionDate","value","state","notes","created_date"],
-  Documents: ["id","title","category","date","description","fileName","fileUrl","fileId","meetingId","meetingTitle","created_date"]
+  Documents: ["id","title","category","date","description","fileName","fileUrl","fileId","meetingId","meetingTitle","created_date"],
+  StatementReceipts: ["id","periodKey","label","receiptNumber","fromDate","toDate","amount","issuedAt","updatedAt","history"]
 };
 
 function setup() {
@@ -144,6 +146,7 @@ function doPost(e) {
     if(action==="me") return out({ok:true,data:{user:session,permissions:ROLE_PERMISSIONS[session.role]||[]}});
     if(action==="users") { if(session.role!=="Administrador" || !can(session,"usuarios")) throw Error("Somente o Administrador pode gerenciar usuários."); result=usersAction(p); logAudit(p,result,session); return out({ok:true,data:result}); }
     if(action==="changepassword") { result=changePassword(session,p); logAudit({action:"changePassword",entity:"Users",id:session.userId,data:{description:"Alteração da própria senha"}},result,session); return out({ok:true,data:result}); }
+    if(action==="statementreceipt") { if(!canWrite(session,"financeiro.write")) throw Error("Seu perfil não pode emitir recibos da prestação de contas."); result=saveStatementReceipt(p.data||{}); logAudit({action:"statementReceipt",entity:"StatementReceipts",id:result.id,data:{description:"Emissão/atualização do recibo "+result.receiptNumber,amount:result.amount}},result,session); return out({ok:true,data:result}); }
     const permission=permissionForEntity(p.entity,action);
     if(!can(session,permission)) throw Error("Você não tem permissão para acessar este módulo.");
     const mutating=["create","update","delete","togglepayment","restorebackup","savesettings"].includes(action);
@@ -309,6 +312,31 @@ function update(entity, id, data) {
   return norm(obj, entity);
 }
 
+
+
+function saveStatementReceipt(data) {
+  const sheet=ensureSheet("StatementReceipts");
+  const periodKey=String(data.periodKey||"").trim(), label=String(data.label||"").trim();
+  if(!periodKey||!label) throw Error("Período e histórico são obrigatórios para emitir o recibo.");
+  const records=objs(sheet);
+  const existing=records.find(x=>String(x.periodKey)===periodKey && String(x.label)===label);
+  const now=new Date().toISOString();
+  const amount=Number(data.amount)||0;
+  let history=[];
+  try { history=existing?JSON.parse(existing.history||"[]"):[]; } catch(_) { history=[]; }
+  if(existing && Number(existing.amount)!==amount) history.push({date:now,oldAmount:Number(existing.amount)||0,newAmount:amount,note:"Valor atualizado mantendo o número do recibo"});
+  const record={
+    id:existing?String(existing.id):Utilities.getUuid(), periodKey, label,
+    receiptNumber:existing?String(existing.receiptNumber):String(data.receiptNumber||""),
+    fromDate:String(data.fromDate||""),toDate:String(data.toDate||""),amount,
+    issuedAt:existing?existing.issuedAt:now,updatedAt:now,history:JSON.stringify(history)
+  };
+  if(!record.receiptNumber) throw Error("Não foi possível gerar o número do recibo.");
+  const headers=sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0].map(String);
+  if(existing) { const rn=row(sheet,record.id); sheet.getRange(rn,1,1,headers.length).setValues([headers.map(h=>cell(record[h]))]); }
+  else sheet.appendRow(headers.map(h=>cell(record[h])));
+  return record;
+}
 
 function bookingDateKey(value) {
   if (value === null || value === undefined || value === "") return "";
@@ -688,6 +716,7 @@ function all(session) {
     meetings:objs(ensureSheet("Meetings")).map(x => norm(x,"Meetings")),
     assets:objs(ensureSheet("Assets")).map(x => norm(x,"Assets")),
     documents:objs(ensureSheet("Documents")).map(x => norm(x,"Documents")),
+    statementReceipts:objs(ensureSheet("StatementReceipts")).map(x => { const y=norm(x,"StatementReceipts"); try{y.history=JSON.parse(x.history||"[]")}catch(_){y.history=[]} return y; }),
     users:objs(ensureSheet("Users")).map(sanitizeUser)
   };
 }
