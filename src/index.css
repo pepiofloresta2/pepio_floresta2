@@ -161,7 +161,10 @@
 
 /* Ajustes pontuais de impressão dos relatórios */
 @media print{
-  .reports-page .report-print-title{display:none!important}
+  .reports-page .report-print-title{display:block!important;margin:0 0 14px;padding:0 0 9px;border-bottom:2px solid #b8943d;color:#173e2c}
+  .reports-page .report-print-title h2{font-size:17px;margin:0 0 4px;color:#173e2c}
+  .reports-page .report-print-title div{font-size:11px;color:#52665b}
+  .reports-page.statement-print-mode .report-print-title{display:none!important}
   .reports-page .report-mode-accounts .report-summary,
   .reports-page.report-mode-accounts .report-summary,
   .reports-page.report-mode-accounts .report-monthly,
@@ -170,8 +173,6 @@
   .reports-page.report-mode-accounts .report-table{display:block!important;border:0!important;padding:0!important;margin:0!important;overflow:visible!important}
   .reports-page.report-mode-accounts .report-table h3{margin:0 0 10px;padding:0!important;font-size:14px}
   .reports-page.report-mode-residents .report-summary{display:none!important}
-  .reports-page.report-mode-audit .report-print-title{display:none!important}
   .reports-page.report-mode-audit .report-table>div.no-print{display:none!important}
-  .reports-page.report-mode-history .report-print-title{display:none!important}
   .reports-page.report-mode-residents .report-table{border:0!important;padding:0!important}
 }
