@@ -176,3 +176,28 @@
   .reports-page.report-mode-audit .report-table>div.no-print{display:none!important}
   .reports-page.report-mode-residents .report-table{border:0!important;padding:0!important}
 }
+
+/* Identidade visual Comunidade São Pio — painel verde, dourado e creme */
+:root{--parish-green:#103d2b;--parish-green-2:#176044;--parish-gold:#c69a35;--parish-cream:#fbf7ec;--parish-ink:#17392c}
+body{background:#f7f8f4;color:var(--parish-ink)}
+.app-sidebar{background:linear-gradient(180deg,#103b2a 0%,#0c3022 100%)!important;border-right:1px solid #c39a3c!important;box-shadow:5px 0 24px rgba(15,55,39,.10)}
+.app-sidebar .brand{padding:2px 0 20px;border-bottom:1px solid rgba(211,174,81,.55)}
+.app-sidebar .brand-logo{width:72px;height:72px;flex-basis:72px;border:2px solid #caa449;background:#fdfbf5;padding:2px}
+.app-sidebar .brand-text strong{color:#fff;font-size:17px}
+.app-sidebar .brand-text small{color:#cbd9ce}
+.app-sidebar .user-chip{background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.10)!important;color:#fff}
+.app-sidebar .user-chip small{color:#d4e0d7!important}
+.app-sidebar nav a{color:#f3f7f3!important;border-radius:11px!important;padding:12px!important;transition:background .15s ease,color .15s ease}
+.app-sidebar nav a:hover{background:rgba(255,255,255,.10)!important;color:#fff!important}
+.app-sidebar nav a[aria-current="page"]{background:linear-gradient(100deg,#c39a3b,#d4ad50)!important;color:#fff!important;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.app-sidebar>.btn,.app-sidebar button.btn{background:rgba(255,255,255,.09);color:#fff;border:1px solid rgba(255,255,255,.12)}
+.main-content{padding-top:0!important}
+.app-topbar{height:105px;margin:0 -30px 26px;padding:18px 30px;display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(100deg,#fffdf7,#f7f3e8);border-bottom:3px solid var(--parish-gold)}
+.topbar-brand{display:flex;align-items:center;gap:14px}.topbar-brand .brand{width:auto}.topbar-brand .brand-logo{width:52px;height:52px;flex-basis:52px}.topbar-brand .brand-text{display:none}.topbar-brand>div:last-child{display:grid;gap:3px}.topbar-brand strong{font-family:Georgia,serif;font-size:27px;color:#123d2b}.topbar-brand span{font-size:14px;color:#537064}.topbar-meta{display:flex;align-items:center;gap:20px;color:#244c3c;font-size:13px;font-weight:700}.topbar-meta span{display:flex;align-items:center;gap:8px}.topbar-divider{height:34px;border-left:1px solid #ddcfad}
+.card{border-color:#dfe6df;box-shadow:0 4px 16px rgba(21,58,42,.055);border-radius:15px}
+.btn-primary{background:linear-gradient(135deg,#176044,#0f4a32);box-shadow:0 3px 8px rgba(16,74,50,.16)}.btn-primary:hover{background:#0c422d}.btn-soft{background:#e8f2e9;color:#185a3e}.input:focus{border-color:#c69a35;box-shadow:0 0 0 3px rgba(198,154,53,.16)}
+.admin-hero{background:linear-gradient(105deg,#fffaf0 0%,#f2f5e9 58%,#f8f2df 100%);border-color:#e6d9b7;position:relative;overflow:hidden}.admin-hero:after{content:"✦";position:absolute;right:28%;top:-24px;font-size:150px;color:rgba(190,151,56,.10);pointer-events:none}.eyebrow{color:#9b7425}.admin-hero h2{font-family:Georgia,serif;color:#124a36;font-size:29px}.admin-hero p{color:#526f60}.hero-balance{background:#124b35;color:#fff;padding:17px 20px;border-radius:13px;min-width:210px;text-align:left;box-shadow:0 8px 18px rgba(16,74,50,.18)}.hero-balance small{color:#d5e5d9}.hero-balance strong{font-size:26px}
+.admin-stats>.card{position:relative;overflow:hidden;border-radius:13px;padding:18px 17px 17px 20px!important}.admin-stats>.card:nth-child(4n+1){background:linear-gradient(135deg,#f3faf5,#fff);border-color:#cbded1}.admin-stats>.card:nth-child(4n+2){background:linear-gradient(135deg,#f0f6fc,#fff);border-color:#ccdaeb}.admin-stats>.card:nth-child(4n+3){background:linear-gradient(135deg,#fff4f2,#fff);border-color:#eed0cb}.admin-stats>.card:nth-child(4n){background:linear-gradient(135deg,#fff9ed,#fff);border-color:#e8d9b7}.admin-stats>.card small{color:#4d6c5b!important}.admin-stats>.card>div{color:#174a35}
+.dashboard-panel{border-radius:15px}.dashboard-panel h3{color:#153e2d}.panel-head{border-bottom:1px solid #edf0e9;padding-bottom:12px}.progress{background:#e6e9df}.progress>div{background:linear-gradient(90deg,#1b6947,#c49a38)}.indicator-grid div{background:#f6f8f1;border:1px solid #e7ebdf}.mini-bars i{background:linear-gradient(90deg,#176044,#c39a3b)}.badge-green{background:#e4f1e6;color:#175b3c}.btn-gray{background:#f0f3ed;color:#335344}
+.report-filters{background:#fffdf7}.report-summary>.card{border-top:3px solid var(--parish-gold)}
+@media(max-width:800px){.app-topbar{display:none!important}.main-content{padding-top:76px!important}.mobile-header{background:#103b2a!important;border-bottom:2px solid #c39a3c!important}.mobile-header .brand-text strong{color:#fff}.mobile-header .brand-logo{border-color:#c39a3c}.mobile-menu-btn{background:rgba(255,255,255,.12)!important;color:#fff!important}.mobile-drawer{background:#103b2a!important;color:#fff}.mobile-drawer .brand-text strong,.mobile-drawer .mobile-drawer-head b{color:#fff}.mobile-nav-link{color:#eaf2ec!important}.mobile-nav-link.active{background:#c39a3b!important;color:#fff!important}.mobile-close-btn,.mobile-refresh{background:rgba(255,255,255,.1)!important;color:#fff!important}}
