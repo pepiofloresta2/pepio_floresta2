@@ -102,7 +102,7 @@
 .report-print-title{display:none}
 @media print{
   .statement-hide-print{display:none!important}
-  @page{size:A4 portrait;margin:12mm}
+  @page{size:A4 portrait;margin:15mm}
   body{background:#fff!important}
   .desktop-only,.mobile-only,.no-print,button{display:none!important}
   .main-content{margin:0!important;padding:0!important}
@@ -161,9 +161,15 @@
 
 /* Ajustes pontuais de impressão dos relatórios */
 @media print{
+  .reports-page{width:100%!important;max-width:100%!important;margin:0 auto!important;padding:0 2mm!important;box-sizing:border-box!important}
   .reports-page .report-print-title{display:block!important;margin:0 0 14px;padding:0 0 9px;border-bottom:2px solid #b8943d;color:#173e2c}
+  .reports-page .report-print-brand{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 0 12px;padding-bottom:10px;border-bottom:1px solid #e4d8b8}
+  .reports-page .report-print-brand img{width:54px;height:54px;object-fit:contain}
+  .reports-page .report-print-brand strong{font-size:20px;letter-spacing:.02em;color:#173e2c}
   .reports-page .report-print-title h2{font-size:17px;margin:0 0 4px;color:#173e2c}
-  .reports-page .report-print-title div{font-size:11px;color:#52665b}
+  .reports-page .report-print-title>div:not(.report-print-brand){font-size:11px;color:#52665b}
+  .reports-page .report-table{max-width:100%!important;box-sizing:border-box!important}
+  .reports-page table{max-width:100%!important}
   .reports-page.statement-print-mode .report-print-title{display:none!important}
   .reports-page .report-mode-accounts .report-summary,
   .reports-page.report-mode-accounts .report-summary,

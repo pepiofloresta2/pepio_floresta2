@@ -267,7 +267,7 @@ function Reports({data,canAudit=false}){
       <button className={`btn ${mode==="history"?"btn-primary":"btn-gray"}`} onClick={()=>setMode("history")}>Histórico financeiro</button>
       {canAudit&&<button className={`btn ${mode==="audit"?"btn-primary":"btn-gray"}`} onClick={()=>setMode("audit")}>Auditoria</button>}
     </div>
-    <div className="report-print-title"><h2>{printTitle}</h2><div>{dateBR(from)} a {dateBR(to)}</div></div>
+    <div className="report-print-title"><div className="report-print-brand"><img src={`${import.meta.env.BASE_URL}logo-emblema.png`} alt="Logo da Comunidade São Pio"/><strong>Comunidade São Pio</strong></div><h2>{printTitle}</h2><div>{dateBR(from)} a {dateBR(to)}</div></div>
     {mode==="accounts"&&<>
       <div className="card report-filters no-print"><div className="date-range"><F l="Ano"><select className="input" value={year} onChange={e=>setPeriod(e.target.value)}>{years.map(y=><option key={y} value={y}>{y}</option>)}</select></F><F l="De"><input className="input" type="date" value={from} onChange={e=>{setFrom(e.target.value);setYear(e.target.value.slice(0,4))}}/></F><F l="Até"><input className="input" type="date" value={to} onChange={e=>setTo(e.target.value)}/></F></div></div>
       <div className="report-summary"><Stat t="Saldo inicial" v={brl(initial)}/><Stat t="Entradas" v={brl(income)}/><Stat t="Saídas" v={brl(expense)}/><Stat t="Resultado do período" v={brl(result)}/><Stat t="Saldo final" v={brl(final)}/><Stat t="A receber" v={brl(receivable)}/></div>
